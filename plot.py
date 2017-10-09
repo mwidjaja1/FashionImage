@@ -10,10 +10,12 @@ from keras.utils import np_utils
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from sklearn.metrics import confusion_matrix
 
 
-def conf_matrix(y_test, y_test_predict, classes, title='Confusion Matrix'):
+def conf_matrix(y_test, y_test_predict, classes, title='Confusion Matrix',
+                out=None):
     # Converts both output arrays into just one column based on the class
     y_test_predict_class = y_test_predict.argmax(1)
     y_test_class = y_test.argmax(1)
@@ -40,5 +42,21 @@ def conf_matrix(y_test, y_test_predict, classes, title='Confusion Matrix'):
                  color="white" if cm_data[i, j] > thresh else "black")
 
     plt.tight_layout()
-    plt.show()
-    
+
+    # Saves or Shows Plot
+    if out:
+        plt.savefig(out)
+    else:
+        plt.show()
+
+
+def dict_trends(data, out=None):
+    """ Plots a dictionary's worth of trends """
+    data_df = pd.DataFrame.from_dict(data, orient='index')
+    data_df.plot()
+
+    # Saves or Shows Plot
+    if out:
+        plt.savefig(out)
+    else:
+        plt.show()  

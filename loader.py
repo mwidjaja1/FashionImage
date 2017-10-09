@@ -8,6 +8,8 @@ This is a temporary script file.
 from argparse import ArgumentParser
 from keras.datasets import fashion_mnist
 from keras.utils import np_utils
+import numpy as np
+import pandas as pd
 import os
 import plot
 
@@ -19,12 +21,17 @@ import params
 def parse_args(inargs=None):
     """ Parses input arguments """
     parser = ArgumentParser("./loader.py")
-    standard_path = '/Users/matthew/Github/CancerAnalysis/'
+    standard_path = os.path.dirname(os.path.realpath(__file__))
 
     iargs = parser.add_argument_group('Input Files/Data')
     iargs.add_argument('--csv_file',
                        default=os.path.join(standard_path, 'data.csv'),
                        help='Path to CSV File')
+
+    oargs = parser.add_argument_group('Output Files/Data')
+    oargs.add_argument('--out',
+                       default=os.path.join(standard_path, 'Run'),
+                       help='Path to save output files')
 
     if not inargs:
         args = parser.parse_args()
@@ -45,6 +52,23 @@ def flatten_data(x_train, x_test, y_train, y_test):
     return x_train, y_train, x_test, y_test
 
 
+def np_to_csv(out_dir, out_file, data):
+    """ Saves Numpy array as CSV File """
+    try:
+        out_path = '{}/{}'.format(out_dir, out_file)
+        with open(out_path, 'wb') as out_handle:
+            np.savetxt(out_handle, data, delimiter=',')
+            print("INFO: Saved {}".format(out_path))
+    except Exception:
+        try:
+            with open(out_path, 'w') as out_handle:
+                np.savetxt(out_handle, data, delimiter=',')
+                print("WARNING: {} needed to workaround save".format(out_file))
+        except Exception as err:
+            print("ERROR: Could not save {}".format(out_file))
+            print(err)
+
+
 def main(args):
     # Loads CSV File
     (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
@@ -53,26 +77,60 @@ def main(args):
     # Visualizes Data
     #featureselect.plot_features(data_df)
 
-    # Runs Model
-    model_params = params.standard()
-    model = models.build_intro_model(model_params, x_train.shape)
-    y_test_predict, metrics = models.fit_intro_model(model, x_train, y_train,
-                                                     x_test, y_test)
+    # Creates output directory
+    if not os.path.isdir(args.out):
+        os.makedirs(args.out)
 
-    # Plots Confusion Matrix
-    classes = {0: 'T-Shirt/top',
-               1: 'Trouser',
-               2: 'Pullover',
-               3: 'Dress',
-               4: 'Coat',
-               5: 'Sandal',
-               6: 'Shirt',
-               7: 'Sneaker',
-               8: 'Bag',
-               9: 'Ankle boot'}
-    title = 'Confusion Matrix | Loss {} & Acc {}'.format(*metrics)
-    class_values = list(classes.values())
-    plot.conf_matrix(y_test, y_test_predict, class_values, title=title)
+    # Creates range to loop filter between
+    range = ['optimizer']
+    history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
+
+    # Runs Model
+    for new in range:
+        print('Creating Model for {} optimizer'.format(new))
+        model_params = params.standard()
+        model_params['optimizer'] = filter
+    
+        model = models.build_intro_model(model_params, x_train.shape)
+        y_test_predict, metrics = models.fit_intro_model(model, model_params,
+                                                         x_train, y_train,
+                                                         x_test, y_test)
+
+        # Adds Data to Trends
+        history_dict[new]['loss'] = metrics[0]
+        history_dict[new]['acc'] = metrics[1]
+
+        # Plots Confusion Matrix
+        classes = {0: 'T-Shirt/top',
+                   1: 'Trouser',
+                   2: 'Pullover',
+                   3: 'Dress',
+                   4: 'Coat',
+                   5: 'Sandal',
+                   6: 'Shirt',
+                   7: 'Sneaker',
+                   8: 'Bag',
+                   9: 'Ankle boot'}
+        title = 'Confusion Matrix | Loss {} & Acc {}'.format(*metrics)
+        class_values = list(classes.values())
+        conf_matrix_png = '{}/{}opt_conf.png'.format(args.out, new)
+        plot.conf_matrix(y_test, y_test_predict, class_values, title=title,
+                         out=conf_matrix_png)
+
+    """
+    # Saves Numpy Array as CSV File
+    if args.out:
+        np_to_csv(args.out, 'x_train.csv', x_train)
+        np_to_csv(args.out, 'y_train.csv', y_train)
+        np_to_csv(args.out, 'x_test.csv', x_test)
+        np_to_csv(args.out, 'y_test.csv', y_test)
+        np_to_csv(args.out, 'y_test_predict.csv', y_test_predict)
+        np_to_csv(args.out, 'metrics.csv', metrics)
+    """
+
+    # Plots Accuracy & Loss Trends
+    trends_png = '{}/optimizer.png'.format(args.out)
+    plot.dict_trends(history_dict, out=trends_png)
 
     return x_train, y_train, x_test, y_test, y_test_predict, metrics
 
