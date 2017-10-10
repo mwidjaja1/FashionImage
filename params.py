@@ -10,7 +10,7 @@ def standard():
     params = {}
 
     # Build Parameters
-    params['conv_filters'] = 24
+    params['conv_filters'] = 32
     params['nb_pool'] = 2
     params['nb_conv'] = 2
     params['optimizer'] = 'adam'

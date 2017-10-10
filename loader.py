@@ -82,14 +82,14 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    range = ['optimizer']
+    range = ['sgd', 'rmsprop', 'adagrad', 'adadelta', 'adam', 'adamax', 'nadam']
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
     for new in range:
         print('Creating Model for {} optimizer'.format(new))
         model_params = params.standard()
-        model_params['optimizer'] = filter
+        model_params['optimizer'] = new
     
         model = models.build_intro_model(model_params, x_train.shape)
         y_test_predict, metrics = models.fit_intro_model(model, model_params,

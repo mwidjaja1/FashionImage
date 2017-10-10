@@ -21,7 +21,7 @@ def build_intro_model(model_params, shape):
 
     model.add(Dense(128, activation='relu'))
     model.add(Dense(28, activation='softmax'))
- 
+
     model.compile(loss=model_params['loss'],
                   optimizer=model_params['optimizer'],
                   metrics=['accuracy'])
