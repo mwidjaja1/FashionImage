@@ -6,7 +6,6 @@ Created on Sun Oct  1 21:41:41 2017
 @author: matthew
 """
 
-from keras.utils import np_utils
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
@@ -50,10 +49,15 @@ def conf_matrix(y_test, y_test_predict, classes, title='Confusion Matrix',
         plt.show()
 
 
-def dict_trends(data, out=None):
+def dict_trends(data, xlabel='Variable', out=None):
     """ Plots a dictionary's worth of trends """
     data_df = pd.DataFrame.from_dict(data, orient='index')
-    data_df.plot()
+    ax = data_df.plot()
+
+    # Sets Axes
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel('Score')
+    ax.set_title('Modifying {}'.format(xlabel))
 
     # Saves or Shows Plot
     if out:

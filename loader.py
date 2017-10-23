@@ -17,6 +17,7 @@ import plot
 import models
 import params
 
+np.set_printoptions(precision=2)
 
 def parse_args(inargs=None):
     """ Parses input arguments """
@@ -82,23 +83,23 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    range = ['sgd', 'rmsprop', 'adagrad', 'adadelta', 'adam', 'adamax', 'nadam']
+    change = 'model'
+    range = ['double']
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
     for new in range:
-        print('Creating Model for {} optimizer'.format(new))
+        print('Creating Model with the {} {}'.format(new, change))
         model_params = params.standard()
-        model_params['optimizer'] = new
     
-        model = models.build_intro_model(model_params, x_train.shape)
-        y_test_predict, metrics = models.fit_intro_model(model, model_params,
-                                                         x_train, y_train,
-                                                         x_test, y_test)
+        model = models.build_theano_model(model_params, x_train.shape)
+        #model = models.build_double_model(model_params, x_train.shape)
+        y_pred, metrics = models.fit_model(model, model_params, 
+                                           x_train, y_train, x_test, y_test)
 
         # Adds Data to Trends
-        history_dict[new]['loss'] = metrics[0]
-        history_dict[new]['acc'] = metrics[1]
+        history_dict[new]['loss'] = metrics['loss']
+        history_dict[new]['acc'] = metrics['acc']
 
         # Plots Confusion Matrix
         classes = {0: 'T-Shirt/top',
@@ -111,35 +112,19 @@ def main(args):
                    7: 'Sneaker',
                    8: 'Bag',
                    9: 'Ankle boot'}
-        title = 'Confusion Matrix | Loss {} & Acc {}'.format(*metrics)
         class_values = list(classes.values())
-        conf_matrix_png = '{}/{}opt_conf.png'.format(args.out, new)
-        plot.conf_matrix(y_test, y_test_predict, class_values, title=title,
-                         out=conf_matrix_png)
-
-    """
-    # Saves Numpy Array as CSV File
-    if args.out:
-        np_to_csv(args.out, 'x_train.csv', x_train)
-        np_to_csv(args.out, 'y_train.csv', y_train)
-        np_to_csv(args.out, 'x_test.csv', x_test)
-        np_to_csv(args.out, 'y_test.csv', y_test)
-        np_to_csv(args.out, 'y_test_predict.csv', y_test_predict)
-        np_to_csv(args.out, 'metrics.csv', metrics)
-    """
+        title = "{} (Loss {} & Acc {})".format(new, metrics['loss'], metrics['acc'])
+        conf_png = '{}/{}_{}.png'.format(args.out, new, change)
+        plot.conf_matrix(y_test, y_pred, class_values, out=conf_png, title=title)
 
     # Plots Accuracy & Loss Trends
-    trends_png = '{}/optimizer.png'.format(args.out)
-    plot.dict_trends(history_dict, out=trends_png)
+    trends_png = '{}/{}.png'.format(args.out, change)
+    plot.dict_trends(history_dict, xlabel=change, out=trends_png)
 
-    return x_train, y_train, x_test, y_test, y_test_predict, metrics
-
-
-
-
+    return x_train, y_train, x_test, y_test, y_pred
 
 
 if __name__ == "__main__":
     ARGS = parse_args()
-    x_train, y_train, x_test, y_test, y_test_predict, metrics = main(ARGS)
+    x_train, y_train, x_test, y_test, y_pred = main(ARGS)
     #models.random_forest(data_df)
