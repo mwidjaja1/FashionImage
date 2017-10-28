@@ -1,9 +1,3 @@
-
-import numpy as np
-
-np.set_printoptions(precision=2)
-
-
 def build_theano_model(model_params, shape):
     """ Builds basic neural network model using Theano """
     from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling2D
@@ -51,12 +45,10 @@ def build_double_model(model_params, shape):
     model.add(Conv2D(model_params['conv_filters'],
                      (model_params['nb_pool']*2, model_params['nb_conv']*2),
                      padding='same'))
-    model.add(MaxPooling2D(padding='same'))
     model.add(Conv2D(16, (model_params['nb_pool'], model_params['nb_conv']),
                      padding='same'))
     model.add(MaxPooling2D(padding='same'))
-    model.add(Dropout(0.2))
-    #model.add(AveragePooling2D(padding='same'))
+    model.add(Dropout(0.1))
     model.add(Flatten())
 
     model.add(Dense(128, activation=model_params['activate_1']))
@@ -69,7 +61,6 @@ def build_double_model(model_params, shape):
 
     print(model.summary())
     return model
-
 
 
 def fit_precomputed_models(model_params, x_test, y_test):

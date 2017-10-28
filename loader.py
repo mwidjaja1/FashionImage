@@ -83,8 +83,8 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'model'
-    range = ['double']
+    change = 'epoch'
+    range = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
@@ -92,8 +92,8 @@ def main(args):
         print('Creating Model with the {} {}'.format(new, change))
         model_params = params.standard()
     
-        model = models.build_theano_model(model_params, x_train.shape)
-        #model = models.build_double_model(model_params, x_train.shape)
+        #model = models.build_theano_model(model_params, x_train.shape)
+        model = models.build_double_model(model_params, x_train.shape)
         y_pred, metrics = models.fit_model(model, model_params, 
                                            x_train, y_train, x_test, y_test)
 
