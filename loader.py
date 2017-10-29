@@ -84,22 +84,30 @@ def main(args):
 
     # Creates range to loop filter between
     change = 'epoch'
-    range = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24]
+    #range = [1, 2, 3, 4, 6, 8, 10, 12, 16, 20, 24, 28, 32]
+    range = [1, 2, 4, 8, 10, 12, 16, 20, 24, 32]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
     for new in range:
-        print('Creating Model with the {} {}'.format(new, change))
-        model_params = params.standard()
+        history_dict[new] = {'loss': [], 'acc': []}
+        for loop in [1, 2, 3]:
+            print('Creating Model with the {} {}'.format(new, change))
+            model_params = params.standard()
+            model_params['epoch'] = new
     
-        #model = models.build_theano_model(model_params, x_train.shape)
-        model = models.build_double_model(model_params, x_train.shape)
-        y_pred, metrics = models.fit_model(model, model_params, 
-                                           x_train, y_train, x_test, y_test)
+            #model = models.build_theano_model(model_params, x_train.shape)
+            model = models.build_double_model(model_params, x_train.shape)
+            y_pred, metrics = models.fit_model(model, model_params, 
+                                               x_train, y_train, x_test, y_test)
 
-        # Adds Data to Trends
-        history_dict[new]['loss'] = metrics['loss']
-        history_dict[new]['acc'] = metrics['acc']
+            # Adds Data to Trends
+            history_dict[new]['loss'].append(metrics['loss'])
+            history_dict[new]['acc'].append(metrics['acc'])
+
+        # Calculates Average
+        history_dict[new]['loss'] = np.mean(history_dict[new]['loss'])
+        history_dict[new]['acc'] = np.mean(history_dict[new]['acc'])
 
         # Plots Confusion Matrix
         classes = {0: 'T-Shirt/top',
