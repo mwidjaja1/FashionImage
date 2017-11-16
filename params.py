@@ -17,10 +17,12 @@ def standard():
     params['loss'] = 'categorical_crossentropy'
 
     # Fit Parameters
-    params['epoch'] = 4
+    params['epoch'] = 12
+    params['dropout'] = 0.1
     params['batch_size'] = 128
 
     # Dense Activation
+    params['dense_1'] = 120
     params['activate_1'] = 'relu'
     return params
     

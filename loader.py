@@ -28,6 +28,8 @@ def parse_args(inargs=None):
     iargs.add_argument('--csv_file',
                        default=os.path.join(standard_path, 'data.csv'),
                        help='Path to CSV File')
+    iargs.add_argument('--model', default='cnn',
+                       help='Select: cnn (default), rnn, neural')
 
     oargs = parser.add_argument_group('Output Files/Data')
     oargs.add_argument('--out',
@@ -41,13 +43,16 @@ def parse_args(inargs=None):
     return args
 
 
-def flatten_data(x_train, x_test, y_train, y_test):
+def flatten_data(args, x_train, x_test, y_train, y_test):
     """ Flattens data into a one dimension Numpy Array
     """
     x_train = x_train.astype('float32') / 255
-    x_train = x_train.reshape(x_train.shape[0], 1, 28, 28)
     x_test = x_test.astype('float32') / 255
-    x_test = x_test.reshape(x_test.shape[0], 1, 28, 28)
+
+    if args.model != 'rnn':
+        x_train = x_train.reshape(x_train.shape[0], 1, 28, 28)
+        x_test = x_test.reshape(x_test.shape[0], 1, 28, 28)
+
     y_train = np_utils.to_categorical(y_train, 28)
     y_test = np_utils.to_categorical(y_test, 28)
     return x_train, y_train, x_test, y_test
@@ -72,8 +77,11 @@ def np_to_csv(out_dir, out_file, data):
 
 def main(args):
     # Loads CSV File
+    # x_train = (60000, 28, 28) ==> (28, 28)
+    # y_train = (60000,)
+    # x_test = 
     (x_train, y_train), (x_test, y_test) = fashion_mnist.load_data()
-    x_train, y_train, x_test, y_test = flatten_data(x_train, x_test, y_train, y_test)
+    x_train, y_train, x_test, y_test = flatten_data(args, x_train, x_test, y_train, y_test)
 
     # Visualizes Data
     #featureselect.plot_features(data_df)
@@ -84,7 +92,6 @@ def main(args):
 
     # Creates range to loop filter between
     change = 'epoch'
-    #range = [1, 2, 3, 4, 6, 8, 10, 12, 16, 20, 24, 28, 32]
     range = [1, 2, 4, 8, 10, 12, 16, 20, 24, 32]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
@@ -95,9 +102,14 @@ def main(args):
             print('Creating Model with the {} {}'.format(new, change))
             model_params = params.standard()
             model_params['epoch'] = new
-    
-            #model = models.build_theano_model(model_params, x_train.shape)
-            model = models.build_double_model(model_params, x_train.shape)
+
+            if args.model == 'rnn':
+                model = models.basic_rnn(model_params, x_train.shape)
+            elif args.model == 'neural':
+                model = models.basic_neural(model_params, x_train.shape)
+            else:
+                model = models.double_cnn(model_params, x_train.shape)
+
             y_pred, metrics = models.fit_model(model, model_params, 
                                                x_train, y_train, x_test, y_test)
 
