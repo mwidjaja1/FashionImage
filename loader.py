@@ -9,10 +9,6 @@ from argparse import ArgumentParser
 from keras.datasets import fashion_mnist
 from keras.utils import np_utils
 import numpy as np
-<<<<<<< HEAD
-=======
-import pandas as pd
->>>>>>> 41cbd59cc760fc5840079f5c1ff40089f94d50e6
 import os
 import plot
 
@@ -97,46 +93,6 @@ def main(args):
     # Creates output directory
     if not os.path.isdir(args.out):
         os.makedirs(args.out)
-<<<<<<< HEAD
-
-    # Runs Model
-    model_params = params.standard()
-    mach_learn = models.scikit_validator(x_train, y_train, args.out)
-    model = models.build_intro_model(model_params, x_train.shape)
-    y_test_predict, metrics = models.fit_intro_model(model, model_params,
-                                                     x_train, y_train,
-                                                     x_test, y_test)
-
-    # Plots Confusion Matrix
-    classes = {0: 'T-Shirt/top',
-               1: 'Trouser',
-               2: 'Pullover',
-               3: 'Dress',
-               4: 'Coat',
-               5: 'Sandal',
-               6: 'Shirt',
-               7: 'Sneaker',
-               8: 'Bag',
-               9: 'Ankle boot'}
-    title = 'Confusion Matrix | Loss {} & Acc {}'.format(*metrics)
-    class_values = list(classes.values())
-    plot.conf_matrix(y_test, y_test_predict, class_values, title=title,
-                     out=args.out)
-
-    # Saves Numpy Array as CSV File
-    if args.out:
-        np_to_csv(args.out, 'x_train.csv', x_train)
-        np_to_csv(args.out, 'y_train.csv', y_train)
-        np_to_csv(args.out, 'x_test.csv', x_test)
-        np_to_csv(args.out, 'y_test.csv', y_test)
-        np_to_csv(args.out, 'y_test_predict.csv', y_test_predict)
-        np_to_csv(args.out, 'metrics.csv', metrics)
-
-    return x_train, y_train, x_test, y_test, y_test_predict, metrics
-
-
-=======
->>>>>>> 41cbd59cc760fc5840079f5c1ff40089f94d50e6
 
     # Creates range to loop filter between
     change = 'epoch'

@@ -44,12 +44,6 @@ def conf_matrix(y_test, y_test_predict, classes, title='Confusion Matrix',
 
     # Saves or Shows Plot
     if out:
-<<<<<<< HEAD
-        plt.savefig('{}/confusion_matrix.png'.format(out))
-    else:
-        plt.show()
-    
-=======
         plt.savefig(out)
     else:
         plt.show()
@@ -70,4 +64,3 @@ def dict_trends(data, xlabel='Variable', out=None):
         plt.savefig(out)
     else:
         plt.show()  
->>>>>>> 41cbd59cc760fc5840079f5c1ff40089f94d50e6
