@@ -13,16 +13,18 @@ def standard():
     params['conv_filters'] = 32
     params['nb_pool'] = 2
     params['nb_conv'] = 2
-    params['optimizer'] = 'nadam'
+    # params['optimizer'] = 'nadam'  # Used for CNN
+    params['optimizer'] = 'adam'  # Used for Neural
     params['loss'] = 'categorical_crossentropy'
 
     # Fit Parameters
-    params['epoch'] = 12
+    params['epoch'] = 8
     params['dropout'] = 0.1
     params['batch_size'] = 128
 
     # Dense Activation
     params['dense_1'] = 120
-    params['activate_1'] = 'relu'
+    # params['activate_1'] = 'relu'  # Used for CNN
+    params['activate_1'] = 'sigmoid'  # Used for Neural
     return params
     
