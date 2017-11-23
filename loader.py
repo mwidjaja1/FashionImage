@@ -35,11 +35,6 @@ def parse_args(inargs=None):
                        default=os.path.join(standard_path, 'Run'),
                        help='Path to save output files')
 
-    oargs = parser.add_argument_group('Output Files/Data')
-    oargs.add_argument('--out',
-                       default=os.path.join(standard_path, 'Run'),
-                       help='Path to save output files')
-
     if not inargs:
         args = parser.parse_args()
     else:
@@ -95,8 +90,8 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'epoch'
-    range = [1, 2, 4, 8, 10, 12, 16, 20, 24, 32]
+    change = 'conv_filters'
+    range = [2, 4, 8, 12, 14, 16, 20, 24, 28, 32]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
@@ -105,14 +100,14 @@ def main(args):
         for loop in [1, 2, 3]:
             print('Creating Model with the {} {}'.format(new, change))
             model_params = params.standard()
-            model_params['epoch'] = new
+            model_params['conv_filters'] = new
 
             if args.model == 'rnn':
                 model = models.basic_rnn(model_params, x_train.shape)
             elif args.model == 'neural':
                 model = models.basic_neural(model_params, x_train.shape)
             else:
-                model = models.double_cnn(model_params, x_train.shape)
+                model = models.basic_cnn(model_params, x_train.shape)
 
             y_pred, metrics = models.fit_model(model, model_params, 
                                                x_train, y_train, x_test, y_test)

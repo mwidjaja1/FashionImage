@@ -10,15 +10,14 @@ def standard():
     params = {}
 
     # Build Parameters
-    params['conv_filters'] = 32
-    params['nb_pool'] = 2
-    params['nb_conv'] = 2
+    params['conv_filters'] = 24
+    params['kernel_size'] = 2
     # params['optimizer'] = 'nadam'  # Used for CNN
     params['optimizer'] = 'adam'  # Used for Neural
     params['loss'] = 'categorical_crossentropy'
 
     # Fit Parameters
-    params['epoch'] = 8
+    params['epoch'] = 12
     params['dropout'] = 0.1
     params['batch_size'] = 128
 
