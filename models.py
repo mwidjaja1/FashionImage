@@ -81,10 +81,10 @@ def basic_cnn(model_params, shape):
     model.add(BatchNormalization())
 
     model.add(Conv2D(model_params['conv_filters'],
-                     (model_params['nb_pool'], model_params['nb_conv']),
+                     model_params['kernel_size'],
                      padding='same'))
-    model.add(MaxPooling2D(padding='same'))
-    model.add(Dropout(0.1))
+    #model.add(MaxPooling2D(padding='same'))
+    #model.add(Dropout(0.1))
     model.add(Flatten())
 
     model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
@@ -160,3 +160,21 @@ def double_cnn(model_params, shape):
 
     print(model.summary())
     return model
+
+
+def fit_model(model, model_params, x_train, y_train, x_test, y_test):
+    """ Fits neural network """
+    # Fits Model
+    model.fit(x_train, y_train, epochs=model_params['epoch'],
+              batch_size=model_params['batch_size'], verbose=1)
+
+    # Predicts Model
+    y_pred = model.predict(x_test)
+    y_pred_rounded = y_pred.round()
+
+    # Scores Model on Test Data
+    metrics = {'acc': 0.0, 'loss': 0.0}
+    metrics['loss'], metrics['acc'] = model.evaluate(x_test, y_test, batch_size=128)
+    print('\nAccuracy {} & Loss {}\n'.format(metrics['acc'], metrics['loss']))
+
+    return y_pred_rounded, metrics

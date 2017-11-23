@@ -10,10 +10,10 @@ def standard():
     params = {}
 
     # Build Parameters
-    params['conv_filters'] = 32
-    params['nb_pool'] = 2
-    params['nb_conv'] = 2
-    params['optimizer'] = 'nadam'
+    params['conv_filters'] = 24
+    params['kernel_size'] = 2
+    # params['optimizer'] = 'nadam'  # Used for CNN
+    params['optimizer'] = 'adam'  # Used for Neural
     params['loss'] = 'categorical_crossentropy'
 
     # Fit Parameters
@@ -23,6 +23,7 @@ def standard():
 
     # Dense Activation
     params['dense_1'] = 120
-    params['activate_1'] = 'relu'
+    # params['activate_1'] = 'relu'  # Used for CNN
+    params['activate_1'] = 'sigmoid'  # Used for Neural
     return params
     
