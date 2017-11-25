@@ -90,22 +90,24 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'conv_filters'
-    range = [2, 4, 8, 12, 14, 16, 20, 24, 28, 32]
+    change = 'dropout'
+    range = [0.05, 0.1, 0.15]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
     for new in range:
         history_dict[new] = {'loss': [], 'acc': []}
-        for loop in [1, 2, 3]:
+        for loop in [1, 2, 3, 4, 5]:
             print('Creating Model with the {} {}'.format(new, change))
             model_params = params.standard()
-            model_params['conv_filters'] = new
+            model_params['dropout'] = new
 
             if args.model == 'rnn':
                 model = models.basic_rnn(model_params, x_train.shape)
             elif args.model == 'neural':
                 model = models.basic_neural(model_params, x_train.shape)
+            elif args.model == 'double':
+                model = models.double_cnn(model_params, x_train.shape)
             else:
                 model = models.basic_cnn(model_params, x_train.shape)
 

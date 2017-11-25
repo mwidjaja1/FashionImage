@@ -1,2 +1,0 @@
-Compare this with CNN2_Epoch on 10/29.
-

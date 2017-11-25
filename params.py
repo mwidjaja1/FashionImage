@@ -10,8 +10,9 @@ def standard():
     params = {}
 
     # Build Parameters
-    params['conv_filters'] = 24
-    params['kernel_size'] = 2
+    params['conv_filters'] = 20
+    params['kernel_size'] = 4
+    params['kernel_stride'] = 1
     # params['optimizer'] = 'nadam'  # Used for CNN
     params['optimizer'] = 'adam'  # Used for Neural
     params['loss'] = 'categorical_crossentropy'

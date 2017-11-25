@@ -55,6 +55,7 @@ def basic_neural(model_params, shape):
     model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
     model.add(BatchNormalization())
 
+    model.add(Dropout(model_params['dropout']))
     model.add(Flatten())
 
     model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
@@ -82,9 +83,10 @@ def basic_cnn(model_params, shape):
 
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
+                     strides=model_params['kernel_stride'],
                      padding='same'))
-    #model.add(MaxPooling2D(padding='same'))
-    #model.add(Dropout(0.1))
+    model.add(MaxPooling2D(padding='same'))
+    model.add(Dropout(model_params['dropout']))
     model.add(Flatten())
 
     model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
@@ -112,7 +114,7 @@ def basic_rnn(model_params, shape):
     model.add(SimpleRNN(model_params['conv_filters']))
     #model.add(MaxPool2D(padding='same'))
     #model.add(MaxPooling1D(padding='same'))
-    model.add(Dropout(0.1))
+    model.add(Dropout(model_params['dropout']))
     #model.add(AveragePooling2D(padding='same'))
     #model.add(Flatten())
 
@@ -139,12 +141,17 @@ def double_cnn(model_params, shape):
     model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
     model.add(BatchNormalization())
 
+    model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
+    model.add(BatchNormalization())
+
     model.add(Conv2D(model_params['conv_filters'],
-                     (model_params['nb_pool'], model_params['nb_conv']),
+                     model_params['kernel_size'],
+                     strides=model_params['kernel_stride'],
                      padding='same'))
     model.add(MaxPooling2D(padding='same'))
-    model.add(Conv2D(model_params['conv_filters'],
-                     (model_params['nb_pool'], model_params['nb_conv']),
+
+    model.add(Conv2D(10,
+                     2,
                      padding='same'))
     model.add(MaxPooling2D(padding='same'))
     model.add(Dropout(model_params['dropout']))
@@ -160,6 +167,23 @@ def double_cnn(model_params, shape):
 
     print(model.summary())
     return model
+
+
+def pre_compiled_model(model_params):
+	from keras.applications.resnet50 import ResNet50
+	from keras.preprocessing import image
+	from keras.applications.resnet50 import preprocess_input, decode_predictions
+	import numpy as np
+
+	model = ResNet50(weights='imagenet')
+
+	img_path = 'elephant.jpg'
+	img = image.load_img(img_path, target_size=(224, 224))
+	x = image.img_to_array(img)
+	x = np.expand_dims(x, axis=0)
+	x = preprocess_input(x)
+
+	preds = model.predict(x)
 
 
 def fit_model(model, model_params, x_train, y_train, x_test, y_test):
