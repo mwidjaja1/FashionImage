@@ -90,36 +90,8 @@ def basic_cnn(model_params, shape):
     model.add(Flatten())
 
     model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
+    #model.add(Dropout(model_params['dropout']))
     model.add(Dense(28, activation='softmax'))
-
-    model.compile(loss=model_params['loss'],
-                  optimizer=model_params['optimizer'],
-                  metrics=['accuracy'])
-
-    print(model.summary())
-    return model
-
-
-def basic_rnn(model_params, shape):
-    """ Builds basic Recurrent neural network model """
-    from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling1D, SimpleRNN
-    from keras.layers.normalization import BatchNormalization
-    from keras.models import Sequential
-
-    model = Sequential()
-
-    model.add(InputLayer(input_shape=(shape[1], shape[2])))
-    model.add(BatchNormalization())
-
-    model.add(SimpleRNN(model_params['conv_filters']))
-    #model.add(MaxPool2D(padding='same'))
-    #model.add(MaxPooling1D(padding='same'))
-    model.add(Dropout(model_params['dropout']))
-    #model.add(AveragePooling2D(padding='same'))
-    #model.add(Flatten())
-
-    model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
-    model.add(Dense(10, activation='softmax'))
 
     model.compile(loss=model_params['loss'],
                   optimizer=model_params['optimizer'],
@@ -141,17 +113,14 @@ def double_cnn(model_params, shape):
     model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
     model.add(BatchNormalization())
 
-    model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
-    model.add(BatchNormalization())
-
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
                      strides=model_params['kernel_stride'],
                      padding='same'))
-    model.add(MaxPooling2D(padding='same'))
 
-    model.add(Conv2D(10,
-                     2,
+    model.add(Conv2D(model_params['conv_filters'],
+                     model_params['kernel_size'],
+                     strides=model_params['kernel_stride'],
                      padding='same'))
     model.add(MaxPooling2D(padding='same'))
     model.add(Dropout(model_params['dropout']))
@@ -169,24 +138,77 @@ def double_cnn(model_params, shape):
     return model
 
 
-def pre_compiled_model(model_params):
-	from keras.applications.resnet50 import ResNet50
-	from keras.preprocessing import image
-	from keras.applications.resnet50 import preprocess_input, decode_predictions
-	import numpy as np
+def vgg(model_params, shape):
+    """ Builds a VGG-19 like model """
+    from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling2D, ZeroPadding2D
+    from keras.layers.normalization import BatchNormalization
+    from keras.layers.convolutional import Conv2D
+    from keras.models import Sequential
 
-	model = ResNet50(weights='imagenet')
+    model = Sequential()
 
-	img_path = 'elephant.jpg'
-	img = image.load_img(img_path, target_size=(224, 224))
-	x = image.img_to_array(img)
-	x = np.expand_dims(x, axis=0)
-	x = preprocess_input(x)
+    model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
+    model.add(BatchNormalization())
 
-	preds = model.predict(x)
+    model.add(Conv2D(model_params['vgg_filters_1'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_1'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(MaxPooling2D(padding='same'))
+
+    model.add(Conv2D(model_params['vgg_filters_2'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_2'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(MaxPooling2D(padding='same'))
+
+    model.add(Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(MaxPooling2D(padding='same'))
+   
+    model.add(Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                     activation=model_params['vgg_activation'], padding='same'))
+    model.add(ZeroPadding2D())
+    model.add(MaxPooling2D(padding='same'))
+
+    model.add(Flatten())
+
+    model.add(Dense(model_params['dense_1'], activation=model_params['vgg_activation']))
+    model.add(Dense(model_params['dense_1'], activation=model_params['vgg_activation']))
+    model.add(Dense(28, activation='softmax'))
+
+    model.compile(loss=model_params['loss'],
+                  optimizer=model_params['optimizer'],
+                  metrics=['accuracy'])
+
+    print(model.summary())
+    return model
 
 
-def fit_model(model, model_params, x_train, y_train, x_test, y_test):
+def fit_model(model, model_params, x_train, y_train, x_test, y_test, plot=False):
     """ Fits neural network """
     # Fits Model
     model.fit(x_train, y_train, epochs=model_params['epoch'],
@@ -200,5 +222,10 @@ def fit_model(model, model_params, x_train, y_train, x_test, y_test):
     metrics = {'acc': 0.0, 'loss': 0.0}
     metrics['loss'], metrics['acc'] = model.evaluate(x_test, y_test, batch_size=128)
     print('\nAccuracy {} & Loss {}\n'.format(metrics['acc'], metrics['loss']))
+
+    # Plots Weight if Requested
+    if plot:
+        from keras.utils import plot_model
+        plot_model(model, to_file='weights.png')
 
     return y_pred_rounded, metrics
