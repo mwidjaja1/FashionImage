@@ -28,12 +28,15 @@ def parse_args(inargs=None):
                        default=os.path.join(standard_path, 'data.csv'),
                        help='Path to CSV File')
     iargs.add_argument('--model', default='cnn',
-                       help='Select: cnn (default), rnn, neural')
+                       help='Select: cnn (default), rnn, neural, vgg')
 
     oargs = parser.add_argument_group('Output Files/Data')
     oargs.add_argument('--out',
                        default=os.path.join(standard_path, 'Run'),
                        help='Path to save output files')
+    oargs.add_argument('--plot',
+                       default=False, action='store_true',
+                       help='Enable this to plot the weights from Keras')
 
     if not inargs:
         args = parser.parse_args()
@@ -90,8 +93,9 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'dropout'
-    range = [0.05, 0.1, 0.15]
+    change = 'gpu_vgg_epoch'
+    #range = [30, 40, 50, 60, 70]
+    range = [30, 40, 50, 60, 70]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
@@ -100,7 +104,7 @@ def main(args):
         for loop in [1, 2, 3, 4, 5]:
             print('Creating Model with the {} {}'.format(new, change))
             model_params = params.standard()
-            model_params['dropout'] = new
+            model_params['epoch'] = new
 
             if args.model == 'rnn':
                 model = models.basic_rnn(model_params, x_train.shape)
@@ -108,11 +112,13 @@ def main(args):
                 model = models.basic_neural(model_params, x_train.shape)
             elif args.model == 'double':
                 model = models.double_cnn(model_params, x_train.shape)
+            elif args.model == 'vgg':
+                model = models.vgg(model_params, x_train.shape)
             else:
                 model = models.basic_cnn(model_params, x_train.shape)
 
-            y_pred, metrics = models.fit_model(model, model_params, 
-                                               x_train, y_train, x_test, y_test)
+            y_pred, metrics = models.fit_model(model, model_params, x_train, y_train,
+                                               x_test, y_test, plot=args.plot)
 
             # Adds Data to Trends
             history_dict[new]['loss'].append(metrics['loss'])

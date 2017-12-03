@@ -18,13 +18,23 @@ def standard():
     params['loss'] = 'categorical_crossentropy'
 
     # Fit Parameters
-    params['epoch'] = 12
+    params['epoch'] = 200
     params['dropout'] = 0.1
     params['batch_size'] = 128
 
-    # Dense Activation
+    # Dense Layer
     params['dense_1'] = 120
     # params['activate_1'] = 'relu'  # Used for CNN
     params['activate_1'] = 'sigmoid'  # Used for Neural
+
+    # VGG Parameters
+    params['vgg_filters_1'] = 8
+    params['vgg_filters_2'] = 16
+    params['vgg_filters_3'] = 32
+    params['vgg_filters_4'] = 64
+    params['vgg_kernel'] = 4
+    params['vgg_dense'] = 504
+    params['vgg_activation'] = 'relu'
+
     return params
     
