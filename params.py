@@ -13,8 +13,8 @@ def standard():
     params['conv_filters'] = 20
     params['kernel_size'] = 4
     params['kernel_stride'] = 1
-    # params['optimizer'] = 'nadam'  # Used for CNN
-    params['optimizer'] = 'adam'  # Used for Neural
+    params['optimizer'] = 'adam'
+    params['cnn_activation'] = 'relu'
     params['loss'] = 'categorical_crossentropy'
 
     # Fit Parameters

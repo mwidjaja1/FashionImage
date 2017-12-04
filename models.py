@@ -102,8 +102,8 @@ def basic_cnn(model_params, shape):
 
 
 def double_cnn(model_params, shape):
-    """ Builds basic Convolutional neural network model """
-    from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling2D
+    """ Builds a double Convolutional neural network model """
+    from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling2D, ZeroPadding2D
     from keras.layers.normalization import BatchNormalization
     from keras.layers.convolutional import Conv2D
     from keras.models import Sequential
@@ -116,17 +116,23 @@ def double_cnn(model_params, shape):
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
                      strides=model_params['kernel_stride'],
+                     activation=model_params['cnn_activation'],
                      padding='same'))
+    model.add(ZeroPadding2D())
 
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
                      strides=model_params['kernel_stride'],
+                     activation=model_params['cnn_activation'],
                      padding='same'))
+    model.add(ZeroPadding2D())
+
     model.add(MaxPooling2D(padding='same'))
     model.add(Dropout(model_params['dropout']))
 
     model.add(Flatten())
 
+    model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
     model.add(Dense(model_params['dense_1'], activation=model_params['activate_1']))
     model.add(Dense(28, activation='softmax'))
 

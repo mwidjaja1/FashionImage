@@ -14,6 +14,7 @@ import plot
 
 #import featureselect
 import models
+import models_res
 import params
 
 np.set_printoptions(precision=2)
@@ -93,9 +94,9 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'gpu_vgg_epoch'
+    change = 'gpu_cnn_epoch'
     #range = [30, 40, 50, 60, 70]
-    range = [30, 40, 50, 60, 70]
+    range = [20, 30, 40]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
@@ -114,6 +115,8 @@ def main(args):
                 model = models.double_cnn(model_params, x_train.shape)
             elif args.model == 'vgg':
                 model = models.vgg(model_params, x_train.shape)
+            elif args.model == 'res':
+                model = models_res.main(model_params, x_train.shape)
             else:
                 model = models.basic_cnn(model_params, x_train.shape)
 
