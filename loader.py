@@ -95,13 +95,13 @@ def main(args):
 
     # Creates range to loop filter between
     change = 'gpu_res_epoch'
-    range = [25, 35, 45, 55]
+    range = [25, 35, 45]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
     for new in range:
         history_dict[new] = {'loss': [], 'acc': []}
-        for loop in [1, 2, 3]:
+        for loop in [1, 2]:
             print('Creating Model with the {} {}'.format(new, change))
             model_params = params.standard()
             model_params['epoch'] = new
