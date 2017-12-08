@@ -36,5 +36,14 @@ def standard():
     params['vgg_dense'] = 504
     params['vgg_activation'] = 'relu'
 
+    # ResNet Parameters
+    params['res_filters_1'] = 8
+    params['res_filters_3'] = 16
+    params['res_filters_4'] = 32
+    params['res_filters_5'] = 64
+    params['res_activate'] = 'relu'
+    params['res_kernel_size'] = 4
+    params['res_dense'] = 504
+
     return params
     
