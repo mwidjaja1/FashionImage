@@ -1,4 +1,4 @@
-from keras.layers import Activation, AveragePooling2D, Add, Dense, Flatten, Input, MaxPool2D, ZeroPadding2D
+from keras.layers import Activation, AveragePooling2D, Add, Dense, Dropout, Flatten, Input, MaxPool2D, ZeroPadding2D
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import Conv2D
 from keras.models import Model
@@ -18,19 +18,20 @@ def standard_conv(model, filter, kernel_size, activation, shortcut=None):
     eps = 1.1e-5
 
     model = Conv2D(filter, kernel_size, padding='same')(model)
-    #model = BatchNormalization()(model)
+    model = BatchNormalization()(model)
     model = Activation(activation)(model)
 
     model = Conv2D(filter, kernel_size, padding='same')(model)
-    #model = BatchNormalization()(model)
+    model = BatchNormalization()(model)
     model = Activation(activation)(model)
 
     model = Conv2D(filter*4, kernel_size, padding='same')(model)
-    #model = BatchNormalization()(model)
+    model = BatchNormalization()(model)
+    model = Dropout(0.1)(model)
 
     if shortcut != None:
         shortcut_model = Conv2D(filter*4, kernel_size, padding='same')(shortcut)
-        #shortcut_model = BatchNormalization()(shortcut_model)
+        shortcut_model = BatchNormalization()(shortcut_model)
         model = Add()([model, shortcut_model])
 
     model = Activation(activation)(model)
@@ -58,10 +59,10 @@ def main(model_params, shape):
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'],
                           shortcut=model)
-    #model = standard_conv(model,
-    #                     model_params['res_filters_1'],
-    #                     model_params['res_kernel_size'],
-    #                     model_params['cnn_activation'])
+    model = standard_conv(model,
+                         model_params['res_filters_1'],
+                         model_params['res_kernel_size'],
+                         model_params['cnn_activation'])
     model = standard_conv(model,
                           model_params['res_filters_1'],
                           model_params['res_kernel_size'],
@@ -74,11 +75,20 @@ def main(model_params, shape):
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'],
                           shortcut=model)
-    #for _ in range(1, 2):
     model = standard_conv(model,
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    model = standard_conv(model,
+                          model_params['res_filters_3'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    """
+    model = standard_conv(model,
+                          model_params['res_filters_3'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    """
 
     # Four Series (Red)
     model = standard_conv(model,
@@ -86,11 +96,28 @@ def main(model_params, shape):
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'],
                           shortcut=model)
-    #for _ in range(1, 3):
     model = standard_conv(model,
-                          model_params['res_filters_3'],
+                          model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    model = standard_conv(model,
+                         model_params['res_filters_4'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    """
+    model = standard_conv(model,
+                          model_params['res_filters_4'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    model = standard_conv(model,
+                          model_params['res_filters_4'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    model = standard_conv(model,
+                          model_params['res_filters_4'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    """
 
     # Five Series (Purple)
     model = standard_conv(model,
@@ -98,10 +125,10 @@ def main(model_params, shape):
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'],
                           shortcut=model)
-    #model = standard_conv(model,
-    #                      model_params['res_filters_5'],
-    #                      model_params['res_kernel_size'],
-    #                      model_params['cnn_activation'])    
+    model = standard_conv(model,
+                          model_params['res_filters_5'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])    
     model = standard_conv(model,
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
