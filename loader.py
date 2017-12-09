@@ -95,7 +95,7 @@ def main(args):
 
     # Creates range to loop filter between
     change = 'gpu_res_epoch'
-    range = [25, 35, 45]
+    range = [25, 35, 45, 55]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
