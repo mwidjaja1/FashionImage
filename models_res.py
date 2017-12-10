@@ -19,15 +19,14 @@ def standard_conv(model, filter, kernel_size, activation, shortcut=None):
 
     model = Conv2D(filter, kernel_size, padding='same')(model)
     model = BatchNormalization()(model)
-    model = Activation(activation)(model)
+    #model = Activation(activation)(model)
 
     model = Conv2D(filter, kernel_size, padding='same')(model)
     model = BatchNormalization()(model)
-    model = Activation(activation)(model)
+    #model = Activation(activation)(model)
 
     model = Conv2D(filter*4, kernel_size, padding='same')(model)
     model = BatchNormalization()(model)
-    model = Dropout(0.1)(model)
 
     if shortcut != None:
         shortcut_model = Conv2D(filter*4, kernel_size, padding='same')(shortcut)
@@ -63,11 +62,13 @@ def main(model_params, shape):
                          model_params['res_filters_1'],
                          model_params['res_kernel_size'],
                          model_params['cnn_activation'])
+    """
+
     model = standard_conv(model,
                           model_params['res_filters_1'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-
+    """
     
     # Third Series (Green)
     model = standard_conv(model,
@@ -79,11 +80,11 @@ def main(model_params, shape):
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
     model = standard_conv(model,
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """
     model = standard_conv(model,
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
@@ -100,11 +101,11 @@ def main(model_params, shape):
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
     model = standard_conv(model,
                          model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """
     model = standard_conv(model,
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
@@ -128,14 +129,17 @@ def main(model_params, shape):
     model = standard_conv(model,
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
-                          model_params['cnn_activation'])    
+                          model_params['cnn_activation'])
+    """
     model = standard_conv(model,
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
 
     # Final Neural Layer
     model_neural = AveragePooling2D()(model)
+    #model_neural = Dropout(0.2)(model_neural)
     model_neural = Flatten()(model_neural)
     #model_neural = Dense(model_params['res_dense'],
     #                    activation=model_params['res_activate'])(model_neural)

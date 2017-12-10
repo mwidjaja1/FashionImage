@@ -101,8 +101,8 @@ def basic_cnn(model_params, shape):
     return model
 
 
-def double_cnn(model_params, shape):
-    """ Builds a double Convolutional neural network model """
+def triple_cnn(model_params, shape):
+    """ Builds a triple Convolutional neural network model """
     from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling2D, ZeroPadding2D
     from keras.layers.normalization import BatchNormalization
     from keras.layers.convolutional import Conv2D
@@ -118,17 +118,21 @@ def double_cnn(model_params, shape):
                      strides=model_params['kernel_stride'],
                      activation=model_params['cnn_activation'],
                      padding='same'))
-    model.add(ZeroPadding2D())
 
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
                      strides=model_params['kernel_stride'],
                      activation=model_params['cnn_activation'],
                      padding='same'))
-    model.add(ZeroPadding2D())
+
+    model.add(Conv2D(model_params['conv_filters'],
+                     model_params['kernel_size'],
+                     strides=model_params['kernel_stride'],
+                     activation=model_params['cnn_activation'],
+                     padding='same'))
 
     model.add(MaxPooling2D(padding='same'))
-    model.add(Dropout(model_params['dropout']))
+    model.add(Dropout(0.5))
 
     model.add(Flatten())
 
@@ -144,14 +148,12 @@ def double_cnn(model_params, shape):
     return model
 
 
-def vgg(model_params, shape):
+def vgg_seq(model_params, shape):
     """ Builds a VGG-19 like model """
     from keras.layers import Dense, Dropout, Flatten, InputLayer, MaxPooling2D, ZeroPadding2D
     from keras.layers.normalization import BatchNormalization
     from keras.layers.convolutional import Conv2D
     from keras.models import Sequential
-
-    model = Sequential()
 
     model.add(InputLayer(input_shape=(shape[1], shape[2], shape[3])))
     model.add(BatchNormalization())
@@ -204,6 +206,7 @@ def vgg(model_params, shape):
 
     model.add(Dense(model_params['dense_1'], activation=model_params['vgg_activation']))
     model.add(Dense(model_params['dense_1'], activation=model_params['vgg_activation']))
+    #model.add(Dropout(0.5))
     model.add(Dense(28, activation='softmax'))
 
     model.compile(loss=model_params['loss'],
@@ -212,6 +215,59 @@ def vgg(model_params, shape):
 
     print(model.summary())
     return model
+
+
+def vgg(model_params, shape):
+    """ Builds a VGG-16 like model """
+    from keras.layers import Dense, Dropout, Flatten, Input, MaxPooling2D
+    from keras.layers.normalization import BatchNormalization
+    from keras.layers.convolutional import Conv2D
+    from keras.models import Model
+
+    print(shape)
+    input = Input(shape=(shape[1], shape[2], shape[3]))
+
+    tensor = Conv2D(model_params['vgg_filters_1'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(input)
+    tensor = Conv2D(model_params['vgg_filters_1'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = MaxPooling2D(padding='same')(tensor)
+
+    tensor = Conv2D(model_params['vgg_filters_2'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = Conv2D(model_params['vgg_filters_2'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = MaxPooling2D(padding='same')(tensor)
+
+    tensor = Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = Conv2D(model_params['vgg_filters_3'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = MaxPooling2D(padding='same')(tensor)
+   
+    tensor = Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = Conv2D(model_params['vgg_filters_4'], model_params['vgg_kernel'],
+                    activation=model_params['vgg_activation'], padding='same')(tensor)
+    tensor = MaxPooling2D(padding='same')(tensor)
+
+    tensor = Flatten()(tensor)
+
+    tensor = Dense(model_params['dense_1'], activation=model_params['vgg_activation'])(tensor)
+    tensor = Dense(model_params['dense_1'], activation=model_params['vgg_activation'])(tensor)
+    tensor = Dense(28, activation='softmax')(tensor)
+
+    model_compile = Model(input, tensor)
+    model_compile.compile(loss=model_params['loss'],
+                          optimizer=model_params['optimizer'],
+                          metrics=['accuracy'])
+
+    print(model_compile.summary())
+    return model_compile
 
 
 def fit_model(model, model_params, x_train, y_train, x_test, y_test, plot=False):
