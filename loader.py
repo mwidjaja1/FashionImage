@@ -94,8 +94,8 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'gpu_vgg16'
-    range = [5, 10, 15, 20, 25, 30, 35]
+    change = 'gpu_vgg19'
+    range = [5, 10, 15, 20, 25, 30]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
@@ -112,8 +112,10 @@ def main(args):
                 model = models.basic_neural(model_params, x_train.shape)
             elif args.model == 'triple':
                 model = models.triple_cnn(model_params, x_train.shape)
-            elif args.model == 'vgg':
-                model = models.vgg(model_params, x_train.shape)
+            elif args.model == 'vgg16' or args.model == 'vgg':
+                model = models.vgg16(model_params, x_train.shape)
+            elif args.model == 'vgg19':
+                model = models.vgg19(model_params, x_train.shape)
             elif args.model == 'res':
                 model = models_res.main(model_params, x_train.shape)
             else:
