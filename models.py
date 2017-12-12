@@ -118,18 +118,21 @@ def triple_cnn(model_params, shape):
                      strides=model_params['kernel_stride'],
                      activation=model_params['cnn_activation'],
                      padding='same'))
+    model.add(BatchNormalization())
 
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
                      strides=model_params['kernel_stride'],
                      activation=model_params['cnn_activation'],
                      padding='same'))
+    model.add(BatchNormalization())
 
     model.add(Conv2D(model_params['conv_filters'],
                      model_params['kernel_size'],
                      strides=model_params['kernel_stride'],
                      activation=model_params['cnn_activation'],
                      padding='same'))
+    model.add(BatchNormalization())
 
     model.add(MaxPooling2D(padding='same'))
     model.add(Dropout(0.5))

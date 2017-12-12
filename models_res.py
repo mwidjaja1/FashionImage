@@ -64,11 +64,12 @@ def main(model_params, shape):
                          model_params['res_filters_1'],
                          model_params['res_kernel_size'],
                          model_params['cnn_activation'])
-    """ """
+    """
     model = standard_conv(model,
                           model_params['res_filters_1'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
     
     # Third Series (Green)
     model = standard_conv(model,
@@ -80,7 +81,7 @@ def main(model_params, shape):
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """ """
+    """
     model = standard_conv(model,
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
@@ -89,6 +90,7 @@ def main(model_params, shape):
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
 
     # Four Series (Red)
     model = standard_conv(model,
@@ -100,7 +102,7 @@ def main(model_params, shape):
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """ """
+    """
     model = standard_conv(model,
                          model_params['res_filters_4'],
                           model_params['res_kernel_size'],
@@ -117,6 +119,7 @@ def main(model_params, shape):
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
 
     # Five Series (Purple)
     model = standard_conv(model,
@@ -128,11 +131,12 @@ def main(model_params, shape):
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """ """
+    """
     model = standard_conv(model,
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
 
     # Final Neural Layer
     model_neural = AveragePooling2D()(model)

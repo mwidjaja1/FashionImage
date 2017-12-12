@@ -94,14 +94,14 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'gpu_res_original'
-    range = [25, 30]
+    change = 'gpu_triplecnn_batch'
+    range = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model
     for new in range:
         history_dict[new] = {'loss': [], 'acc': []}
-        for loop in [1, 2]:
+        for loop in [1, 2, 3]:
             print('Creating Model with the {} {}'.format(new, change))
             model_params = params.standard()
             model_params['epoch'] = new
