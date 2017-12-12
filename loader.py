@@ -94,8 +94,8 @@ def main(args):
         os.makedirs(args.out)
 
     # Creates range to loop filter between
-    change = 'gpu_vgg19'
-    range = [5, 10, 15, 20, 25, 30]
+    change = 'gpu_res_original'
+    range = [25, 30]
     history_dict = {x: {'loss': 0.0, 'acc': 0.0} for x in range}
 
     # Runs Model

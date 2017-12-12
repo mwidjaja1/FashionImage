@@ -1,42 +1,3 @@
-from keras.layers import Activation, AveragePooling2D, Add, Dense, Flatten, Input, MaxPool2D, ZeroPadding2D
-from keras.layers.normalization import BatchNormalization
-from keras.layers.convolutional import Conv2D
-from keras.models import Model
-
-
-def standard_conv(model, filter, kernel_size, activation, shortcut=None):
-    """ Creates a stack of three standard Convolutional Layers 
-    
-        Inputs:
-        model: The Keras Model to add onto
-        filter: The number of filters to use in the Convolutional Layers
-        kernel_size: The kernel size to use in the Convolutional Layers
-        activation: The Activation Function to use
-        shape: The Keras Model from 'model'. Set this to use the Shortcut Layer.
-                        [Default = None => Don't use the shortcut layer]
-    """
-    eps = 1.1e-5
-
-    model = Conv2D(filter, kernel_size, padding='same')(model)
-    model = BatchNormalization()(model)
-    model = Activation(activation)(model)
-
-    model = Conv2D(filter, kernel_size, padding='same')(model)
-    model = BatchNormalization()(model)
-    model = Activation(activation)(model)
-
-    model = Conv2D(filter*4, kernel_size, padding='same')(model)
-    model = BatchNormalization()(model)
-
-    if shortcut != None:
-        shortcut_model = Conv2D(filter*4, kernel_size, padding='same')(shortcut)
-        shortcut_model = BatchNormalization()(shortcut_model)
-        model = Add()([model, shortcut_model])
-
-    model = Activation(activation)(model)
-    return model
-
-
 def main(model_params, shape):
     """ Builds a ResNet 18 Convolutional Neural Network
         If I uncomment out the block comments, I'd get ResNet 34.
@@ -64,11 +25,11 @@ def main(model_params, shape):
                          model_params['res_filters_1'],
                          model_params['res_kernel_size'],
                          model_params['cnn_activation'])
-    """ """
     model = standard_conv(model,
                           model_params['res_filters_1'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+
     
     # Third Series (Green)
     model = standard_conv(model,
@@ -80,15 +41,16 @@ def main(model_params, shape):
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """ """
-    model = standard_conv(model,
-                          model_params['res_filters_3'],
-                          model_params['res_kernel_size'],
-                          model_params['cnn_activation'])    
     model = standard_conv(model,
                           model_params['res_filters_3'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
+    model = standard_conv(model,
+                          model_params['res_filters_3'],
+                          model_params['res_kernel_size'],
+                          model_params['cnn_activation'])
+    """
 
     # Four Series (Red)
     model = standard_conv(model,
@@ -100,11 +62,11 @@ def main(model_params, shape):
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
-    """ """
     model = standard_conv(model,
                          model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
     model = standard_conv(model,
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
@@ -117,6 +79,7 @@ def main(model_params, shape):
                           model_params['res_filters_4'],
                           model_params['res_kernel_size'],
                           model_params['cnn_activation'])
+    """
 
     # Five Series (Purple)
     model = standard_conv(model,
@@ -127,8 +90,7 @@ def main(model_params, shape):
     model = standard_conv(model,
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
-                          model_params['cnn_activation'])
-    """ """
+                          model_params['cnn_activation'])    
     model = standard_conv(model,
                           model_params['res_filters_5'],
                           model_params['res_kernel_size'],
